@@ -11,8 +11,8 @@ class ProductController extends Controller
     public function index(Request $request) {
         $data = new Product();
         if ($request->get('search')) {
-            $data = $data->where('name','like','%'. $request->get('search') .'%')
-            ->orWhere('email', 'Like','%'. $request->get('search') .'%');
+            $data = $data->where('name','like','%'. $request->get('search') .'%');
+            // ->orWhere('email', 'Like','%'. $request->get('search') .'%');
         }
         $data = $data->get();
         return view('product.index', compact('data', 'request'));

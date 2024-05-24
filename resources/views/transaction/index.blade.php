@@ -43,7 +43,7 @@
                           <label for="id_products">Pilih Menu</label>
                           <select class="form-control" id="id_products">
                             @foreach ($data as $d)
-                            <option value="{{ $d ->id }}" data-nama="{{ $d->name}}" data-harga="{{ $d->price }}"
+                            <option value="{{ $d->id }}" data-nama="{{ $d->name }}" data-harga="{{ $d->price }}"
                               data-id="{{ $d->id }}">{{ $d->name }}</option>
                             @endforeach
                           </select>
@@ -51,49 +51,51 @@
                       </div>
                       <div class="col-md-6 col-12">
                         <label for="">&nbsp</label>
-                        <button type="button" class="btn btn-primary d-block" onclick="addItem()">Tambah Item</button>
+                        <button type="button" class="btn btn-primary d-block" onclick="tambahItem()">
+                          Tambah Item
+                        </button>
+                      </div>
+                    </div>
+
+                    <table class="table table-hover text-nowrap table-bordered">
+                      <thead>
+                        <tr>
+                          <th>No</th>
+                          <th>Nama</th>
+                          <th>Qty</th>
+                          <th>Harga</th>
+                          <th>Hapus</th>
+                        </tr>
+                      </thead>
+                      <tbody class="transaksiItem">
+                        {{-- @foreach ($dataObjects as $d)
+                        <tr>
+                          <td>{{ $loop->iteration }}</td>
+                          <td>{{ $d->name }}</td>
+                          <td>Rp. {{ $d->price }}</td>
+                          <td>{{ $d->quantity }}</td>
+                          <td>
+                            <a href="{{ route('admin.product.edit', ['id' => $d->id]) }}"
+                              class="btn btn-sm btn-danger"></i>Hapus</a>
+                          </td>
+                        </tr>
+                        @endforeach --}}
+                      </tbody>
+                      <tfoot>
+                        <tr>
+                          <th colspan="2">Jumlah</th>
+                          <th class="quantity">0</th>
+                          <th class="totalHarga">0</th>
+                        </tr>
+                      </tfoot>
+                    </table>
+                    <div class="row mt-3">
+                      <div class="col-md-12">
+                        <input type="hidden" name="total_harga" value="0">
+                        <button class="btn btn-success">Simpan Transaksi</button>
                       </div>
                     </div>
                   </form>
-
-                  <table class="table table-hover text-nowrap table-bordered">
-                    <thead>
-                      <tr>
-                        <th>No</th>
-                        <th>Nama</th>
-                        <th>Qty</th>
-                        <th>Harga</th>
-                        <th>Hapus</th>
-                      </tr>
-                    </thead>
-                    <tbody class="transaksiItem">
-                      {{-- @foreach ($dataObjects as $d)
-                      <tr>
-                        <td>{{ $loop->iteration }}</td>
-                        <td>{{ $d->name }}</td>
-                        <td>Rp. {{ $d->price }}</td>
-                        <td>{{ $d->quantity }}</td>
-                        <td>
-                          <a href="{{ route('admin.product.edit', ['id' => $d->id]) }}"
-                            class="btn btn-sm btn-danger"></i>Hapus</a>
-                        </td>
-                      </tr>
-                      @endforeach --}}
-                    </tbody>
-                    <tfoot>
-                      <tr>
-                        <th colspan="2">Jumlah</th>
-                        <th class="quantity">0</th>
-                        <th class="totalHarga">0</th>
-                      </tr>
-                    </tfoot>
-                  </table>
-                  <div class="row mt-3">
-                    <div class="col-md-12">
-                      <input type="hidden" name="total_harga" value="0">
-                      <button class="btn btn-success">Simpan Transaksi</button>
-                    </div>
-                  </div>
                 </div>
                 <!-- /.card-header -->
                 <!-- form start -->
@@ -166,20 +168,19 @@
 @section('script')
 <script>
   var totalHarga = 0;
-      var quantity =var totalHarga = 0;
       var quantity = 0;
       var listItem = [];
 
       function tambahItem() {
-          updateTotalHarga(parseInt($('#id_daftar').find(':selected').data('harga')))
-          var item = listItem.filter(el => el.id_daftar === $('#id_daftar').find(':selected').data('id'));
+          updateTotalHarga(parseInt($('#id_products').find(':selected').data('harga')))
+          var item = listItem.filter(el => el.id === $('#id_products').find(':selected').data('id'));
           if (item.length > 0) {
               item[0].quantity += 1
           } else {
               var item = {
-                  id_daftar: $('#id_daftar').find(':selected').data('id'),
-                  nama: $('#id_daftar').find(':selected').data('nama'),
-                  harga: $('#id_daftar').find(':selected').data('harga'),
+                  id: $('#id_products').find(':selected').data('id'),
+                  name: $('#id_products').find(':selected').data('nama'),
+                  price: $('#id_products').find(':selected').data('harga'),
                   quantity: 1
               }
               listItem.push(item)
@@ -187,64 +188,65 @@
           updateQuantity(1)
           updateTable()
       }
+
       function deleteItem(index) {
-            var item = listItem[index]
-            if (item.quantity > 1) {
-                listItem[index].quantity -= 1;
-                updateTotalHarga(-(item.harga))
-                updateQuantity(-1)
-            } else {
-                listItem.splice(index, 1)
-                updateTotalHarga(-(item.harga * item.quantity))
-                updateQuantity(-(item.quantity))
-            }
-            updateTable()
-        }
+          var item = listItem[index]
+          if (item.quantity > 1) {
+              listItem[index].quantity -= 1;
+              updateTotalHarga(-(item.price))
+              updateQuantity(-1)
+          } else {
+              listItem.splice(index, 1)
+              updateTotalHarga(-(item.price * item.quantity))
+              updateQuantity(-(item.quantity))
+          }
+          updateTable()
+      }
 
-        function updateTable() {
-            var html = ''
-            listItem.map((el, index) => {
-                var harga = formatRupiah(el.harga.toString())
-                var quantity = formatRupiah(el.quantity.toString())
-                html += `
-                <tr>
-                    <td>${index + 1}</td>
-                    <td>${el.nama}</td>
-                    <td>${quantity}</td>
-                    <td>${harga}</td>
-                    <td>
-                        <input type="hidden" name="id_daftar[]" value="${el.id_daftar}">
-                        <input type="hidden" name="quantity[]" value="${el.quantity}">
-                        <button type="button" onclick="deleteItem(${index})" class="btn btn-link"><i class="fas fa-fw fa-trash text-danger"></i></button>
-                    </td>
-                </tr>
-                `
-            })
-            $('.total')
-            $('.transaksiItem').html(html)
-        }
+      function updateTable() {
+          var html = ''
+          listItem.map((el, index) => {
+              var harga = el.price
+              var quantity = el.quantity
+              html += `
+              <tr>
+                  <td>${index + 1}</td>
+                  <td>${el.name}</td>
+                  <td>${quantity}</td>
+                  <td>${harga}</td>
+                  <td>
+                      <input type="hidden" name="id_daftar[]" value="${el.id}">
+                      <input type="hidden" name="quantity[]" value="${el.quantity}">
+                      <button type="button" onclick="deleteItem(${index})" class="btn btn-link"><i class="fas fa-fw fa-trash text-danger"></i></button>
+                  </td>
+              </tr>
+              `
+          })
+          $('.total')
+          $('.transaksiItem').html(html)
+      }
 
-        function updateTotalHarga(nom) {
-            totalHarga = totalHarga + nom;
-            $('[name=total_harga]').val(totalHarga)
-            $('.totalHarga').html(formatRupiah(totalHarga.toString()))
-        }
+      function updateTotalHarga(nom) {
+          totalHarga = totalHarga + nom;
+          $('[name=total_harga]').val(totalHarga)
+          $('.totalHarga').html(totalHarga)
+      }
 
-        function updateQuantity(nom) {
-            quantity = quantity + nom;
-            $('.quantity').html(formatRupiah(quantity.toString()))
-        }
+      function updateQuantity(nom) {
+          quantity = quantity + nom;
+          $('.quantity').html(quantity)
+      }
 
-        function emptyTable() {
-            $('.transaksiItem').html(`
-                <tr>
-                    <td colspan="4">Belum ada item, silahkan tambahkan</td>
-                </tr>
-            `)
-        }
+      function emptyTable() {
+          $('.transaksiItem').html(`
+              <tr>
+                  <td colspan="4">Belum ada item, silahkan tambahkan</td>
+              </tr>
+          `)
+      }
 
-        $(document).ready(function() {
-            emptyTable()
-        })
+      $(document).ready(function() {
+          emptyTable()
+      })
 </script>
 @endsection

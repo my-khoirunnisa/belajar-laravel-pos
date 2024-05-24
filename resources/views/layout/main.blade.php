@@ -252,6 +252,15 @@
               </a>
             </li>
             <li class="nav-item">
+              <a href="{{ route('admin.report') }}"
+                class="nav-link {{ Request::routeIs('admin.report') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-th"></i>
+                <p>
+                  Laporan Transaksi
+                </p>
+              </a>
+            </li>
+            <li class="nav-item">
               <a href="{{ route('logout') }}" class="nav-link">
                 <i class="nav-icon fas fa-th"></i>
                 <p>
@@ -320,6 +329,25 @@
   <script src="{{ asset('lte/dist/js/demo.js')}}"></script>
   <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
   <script src="{{ asset('lte/dist/js/pages/dashboard.js')}}"></script>
+
+  <script>
+    function formatRupiah(angka, prefix) {
+        var number_string = angka.replace(/[^,\d]/g, '').toString(),
+            split = number_string.split(','),
+            sisa = split[0].length % 3,
+            rupiah = split[0].substr(0, sisa),
+            ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+        // tambahkan titik jika yang di input sudah menjadi angka ribuan
+        if (ribuan) {
+            separator = sisa ? '.' : '';
+            rupiah += separator + ribuan.join('.');
+        }
+
+        rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
+        return prefix == undefined ? rupiah : (rupiah ? 'Rp. ' + rupiah : '');
+    }
+  </script>
 
   @yield('script')
 </body>

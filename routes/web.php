@@ -4,6 +4,7 @@ use App\Http\Controllers\DataTableController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
 
@@ -39,6 +40,9 @@ Route::group(['prefix'=> 'admin', 'middleware' => ['auth'], 'as' => 'admin.'], f
     // transaction
     Route::get('/transaction', [TransactionController::class, 'index'])->name('transaction');
     Route::post('/transaction-store', [TransactionController::class, 'store'])->name('transaction.store');
-    // Route::post('/transaction', [TransactionController::class, 'store'])->name('transaction.store');
+    
+    // report
+    Route::get('/report', [ReportController::class, 'index'])->name('report');
+    Route::delete('/report-delete/{id}', [ReportController::class,'delete'])->name('report.delete');
 
 });
